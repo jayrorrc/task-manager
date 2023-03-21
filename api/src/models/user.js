@@ -1,17 +1,17 @@
 import { DataTypes } from 'sequelize'
-import db from '../db.js'
-import task from './task.js'
+import db from './../db.js'
 
-const user = db.define('user', {
+const User = db.define('user', {
   id: {
-    type: DataTypes.INTEGER.UNSIGNED,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
-    autoIncrement: true,
     allowNull: false,
   },
   username: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
   },
   password: {
     type: DataTypes.STRING,
@@ -26,8 +26,4 @@ const user = db.define('user', {
   },
 });
 
-user.hasMany(task, {
-  foreignKey: 'owner'
-})
-
-export default user
+export default User

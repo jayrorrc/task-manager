@@ -1,12 +1,11 @@
 import { DataTypes } from 'sequelize'
 import db from '../db.js'
-import user from './user.js'
 
-const task = db.define('task', {
+const Task = db.define('task', {
   id: {
-    type: DataTypes.INTEGER.UNSIGNED,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
-    autoIncrement: true,
     allowNull: false,
   },
   sumary: {
@@ -21,10 +20,8 @@ const task = db.define('task', {
     }
   },
   completedAt: {
-     type: DataTypes.DataTypes.DATE(6),
+     type: DataTypes.DATE(6),
   }
 });
 
-task.belongsTo(user)
-
-export default task
+export default Task

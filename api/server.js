@@ -1,10 +1,18 @@
 import express from 'express'
-import routes from './routes.js'
+import bodyParser from 'body-parser'
+import logger from 'morgan'
+import cors from 'cors'
+
+import routes from './src/routes/routes.js'
 import db from './src/db.js'
 
 const app = express();
 
-app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(logger('dev'));
+
 app.use(routes);
 
 db.authenticate()
@@ -18,4 +26,10 @@ db.authenticate()
 db.sync(() => console.log(`Database synced`));
 
 const PORT = process.env.SERVER_PORT
-app.listen(PORT, () => console.log(`Servidor iniciado na porta ${PORT}`));
+const HOST = process.env.SERVER_HOST
+
+app.listen(
+  PORT,
+  HOST,
+  () => console.log(`Running on http:/${HOST}:${PORT}`)
+);
