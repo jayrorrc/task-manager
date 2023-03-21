@@ -1,9 +1,9 @@
-import express from "express";
+import express from 'express'
 
 const routes = express.Router();
 
-routes.get("/", (req, res) => {
-  return res.json({ name: "Ciclano Fulano" });
+routes.get('/', (req, res) => {
+  return res.json({ name: 'Ciclano Fulano' });
 });
 
-export { routes as default };
+export default routes
