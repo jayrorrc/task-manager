@@ -1,4 +1,5 @@
-import SingUp from "../repositories/users/SingUp.js"
+import SingUp from '../repositories/users/SingUp.js'
+import ApiError from '../utils/ApiError/ApiError.js'
 
 class UserController {
   async singup(req, res) {
@@ -8,7 +9,11 @@ class UserController {
     } catch (err) {
       console.error('error', err)
 
-      res.status(err.statusCode).json({ errors: err })
+      if (err instanceof ApiError) {
+        res.status(err.statusCode).json({ message: err.message })
+      }
+
+      res.status(500).json({ message: err.message })
     }
   }
 }
