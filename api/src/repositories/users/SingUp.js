@@ -44,7 +44,6 @@ export default {
 
     return {
       data: {
-        user,
         token
       }
     }
