@@ -1,0 +1,39 @@
+version: "3.2"
+
+services:
+  api:
+    container_name: api
+    image: api:latest
+    build:
+      context: .
+      dockerfile: ./dockerfiles/api.Dockerfile
+    networks:
+      - task-manager-network
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: ./api
+        target: /opt/api
+      - /opt/api/node_modules
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    networks:
+      - task-manager-network
+    ports:
+      - "3306:3036"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: task-manager
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    volumes:
+      - type: volume
+        source: db
+        target: /var/lib/mysql
+networks:
+  task-manager-network:
+    driver: bridge
+volumes:
+  db:
