@@ -2,7 +2,8 @@ import User from "./User.js"
 import Task from "./Task.js"
 
 User.hasMany(Task, {
-  foreignKey: 'owner'
+  foreignKey: 'owner',
+  allowNull: false,
 })
 
 Task.belongsTo(User)

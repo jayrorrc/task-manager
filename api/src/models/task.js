@@ -8,9 +8,16 @@ const Task = db.define('task', {
     primaryKey: true,
     allowNull: false,
   },
-  sumary: {
+  title: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  summary: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    validate: {
+      len: [0, 2500],
+    }
   },
   status: {
     type: DataTypes.STRING,
