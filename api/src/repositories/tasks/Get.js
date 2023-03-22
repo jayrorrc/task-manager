@@ -1,7 +1,6 @@
 import { Task } from '../../models/index.js'
 
 import {
-  badRequest,
   unauthorized
 } from '../../utils/ApiError/index.js'
 
@@ -22,7 +21,7 @@ export default {
 
     const testTask = Task.count(filter)
     if(!testTask) {
-      throw unauthorized('This user can not update this tasks ')
+      throw unauthorized('This user can not get this tasks ')
     }
 
     const task = await Task.findOne(filter)
