@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt'
 import dotenv from 'dotenv';
 
 import { User } from './../../models/index.js'
-import Token from '../../jwt/token.js'
+import Token from '../../utils/jwt/token.js'
 import {
   badRequest,
   unauthorized
@@ -16,7 +16,7 @@ export default {
     const { username, password, type } = payload
 
     if (!username || !password || !type) {
-      throw badRequest('Please ensure you fill the username, and password')
+      throw badRequest('Please ensure you fill the username, password and type')
     }
 
     const hasUser = await User.count({
@@ -43,6 +43,7 @@ export default {
     const token = Token(user)
 
     return {
+      statusCode: 201,
       data: {
         token
       }
