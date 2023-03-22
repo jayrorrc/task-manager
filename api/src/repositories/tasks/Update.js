@@ -1,5 +1,13 @@
 import { Task } from '../../models/index.js'
 
+import { sendToQueue } from '../../utils/queue/queue.js'
+
+import {
+  USERS,
+  TASKS,
+  NOTIFICATIONS
+} from '../../utils/constantes/index.js'
+
 import {
   badRequest,
   unauthorized
@@ -24,19 +32,32 @@ export default {
 
     const testTask = Task.count(filter)
 
-    if (type !== 'TECHNICIAN' || !testTask) {
+    if (type !== USERS.TYPES.TECHNICIAN || !testTask) {
       throw unauthorized('This user can not update this tasks ')
     }
 
-    const modified = await Task.update(
-      {
-        title,
-        summary,
-        status,
-        owner
-      },
-      filter
-    )
+    const data = {
+      title,
+      summary,
+      status,
+      owner
+    }
+
+    if (status === TASKS.STATUS.COMPLETE) {
+      data.completedAt = new Date()
+    }
+
+    const modified = await Task.update(data, filter)
+
+    if (status === TASKS.STATUS.COMPLETE) {
+      const task = await Task.findByPk(id)
+
+      sendToQueue(NOTIFICATIONS.QUEUES.TASK.STATUS.COMPLETE, {
+        user: userAuth.username,
+        task: task.title,
+        completedAt: task.completedAt
+      });
+    }
 
     return {
       statusCode: 204,

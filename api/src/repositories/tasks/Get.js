@@ -1,6 +1,10 @@
 import { Task } from '../../models/index.js'
 
 import {
+  USERS,
+} from '../../utils/constantes/index.js'
+
+import {
   unauthorized
 } from '../../utils/ApiError/index.js'
 
@@ -15,7 +19,7 @@ export default {
       }
     }
 
-    if (type === 'TECHNICIAN') {
+    if (type === USERS.TYPES.TECHNICIAN) {
       filter.where.owner = userAuth.id
     }
 

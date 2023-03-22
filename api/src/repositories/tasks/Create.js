@@ -1,5 +1,13 @@
 import { Task } from '../../models/index.js'
 
+import { sendToQueue } from '../../utils/queue/queue.js'
+
+import {
+  USERS,
+  TASKS,
+  NOTIFICATIONS
+} from '../../utils/constantes/index.js'
+
 import {
   badRequest,
   unauthorized
@@ -14,16 +22,30 @@ export default {
     }
 
     const { type } = userAuth
-    if (type !== 'TECHNICIAN') {
+    if (type !== USERS.TYPES.TECHNICIAN) {
       throw unauthorized('This user can not create tasks ')
     }
 
-    const task = await Task.create({
+    const data = {
       title,
       summary,
-      status: status ? status : 'TODO',
+      status: status ? status : TASKS.STATUS.TODO,
       owner: owner ? owner : userAuth.id
-    })
+    }
+
+    if (status === TASKS.STATUS.COMPLETE) {
+      data.completedAt = new Date()
+    }
+
+    const task = await Task.create(data)
+
+    if (status === TASKS.STATUS.COMPLETE) {
+      sendToQueue(NOTIFICATIONS.QUEUES.TASK.STATUS.COMPLETE, {
+        user: userAuth.username,
+        task: task.title,
+        completedAt: task.completedAt
+      });
+    }
 
     return {
       statusCode: 201,

@@ -1,6 +1,8 @@
 import { DataTypes } from 'sequelize'
 import db from '../db.js'
 
+import { TASKS } from '../utils/constantes/index.js';
+
 const Task = db.define('task', {
   id: {
     type: DataTypes.UUID,
@@ -23,11 +25,11 @@ const Task = db.define('task', {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      isIn: [['TODO', 'IN-PROGRESS', 'COMPLETE']],
+      isIn: [Object.values(TASKS.STATUS)],
     }
   },
   completedAt: {
-     type: DataTypes.DATE(6),
+     type: DataTypes.DATE,
   }
 });
 

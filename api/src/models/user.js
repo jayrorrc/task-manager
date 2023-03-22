@@ -1,6 +1,8 @@
 import { DataTypes } from 'sequelize'
 import db from './../db.js'
 
+import { USERS } from '../utils/constantes/index.js';
+
 const User = db.define('user', {
   id: {
     type: DataTypes.UUID,
@@ -21,7 +23,7 @@ const User = db.define('user', {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      isIn: [['MANAGER', 'TECHNICIAN']],
+      isIn: [Object.values(USERS.TYPES)],
     }
   },
 });

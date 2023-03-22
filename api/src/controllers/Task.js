@@ -11,7 +11,7 @@ class TaskController {
   async create(req, res) {
     try {
       const r = await Create.handle(req.userAuth, req.body)
-      res.status(r.statusCode).json({ data:  r.data })
+      res.status(r.statusCode).json({ data: r.data })
     } catch (err) {
       console.error('error', err)
 
@@ -26,7 +26,7 @@ class TaskController {
   async update(req, res) {
     try {
       const r = await Update.handle(req.userAuth, req.params, req.body)
-      res.status(r.statusCode).json({ data:  r.data })
+      res.status(r.statusCode).json({ data: r.data })
     } catch (err) {
       console.error('error', err)
 
@@ -41,7 +41,7 @@ class TaskController {
   async changeStatus(req, res) {
     try {
       const r = await ChangeStatus.handle(req.userAuth, req.params, req.body)
-      res.status(r.statusCode).json({ data:  r.data })
+      res.status(r.statusCode).json({ data: r.data })
     } catch (err) {
       console.error('error', err)
 
@@ -56,7 +56,7 @@ class TaskController {
   async delete(req, res) {
     try {
       const r = await Delete.handle(req.userAuth, req.params)
-      res.status(r.statusCode).json({ data:  r.data })
+      res.status(r.statusCode).json({ data: r.data })
     } catch (err) {
       console.error('error', err)
 

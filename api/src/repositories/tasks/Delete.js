@@ -1,6 +1,10 @@
 import { Task } from '../../models/index.js'
 
 import {
+  USERS,
+} from '../../utils/constantes/index.js'
+
+import {
   unauthorized
 } from '../../utils/ApiError/index.js'
 
@@ -9,7 +13,7 @@ export default {
     const { id } = params
     const { type } = userAuth
 
-    if (type !== 'MANAGER') {
+    if (type !== USERS.TYPES.MANAGER) {
       throw unauthorized('This user can not delete this tasks ')
     }
 
