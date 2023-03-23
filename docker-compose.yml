@@ -74,7 +74,7 @@ services:
       RABBITMQ_DEFAULT_PASS: admin
       CLOUDAMQP_URL: amqp://rabbitmq:5672
     healthcheck:
-      test: rabbitmq-diagnostics ping
+      test: rabbitmq-diagnostics check_running
       start_period: 5s
       interval: 5s
       timeout: 5s
