@@ -44,7 +44,7 @@ export default {
     }
 
     if (status === TASKS.STATUS.COMPLETE) {
-      data.completedAt = new Date()
+      data.completedAt = Date.now()
     }
 
     const modified = await Task.update(data, filter)

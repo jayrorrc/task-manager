@@ -34,7 +34,7 @@ export default {
     }
 
     if (status === TASKS.STATUS.COMPLETE) {
-      data.completedAt = new Date()
+      data.completedAt = Date.now()
     }
 
     const task = await Task.create(data)

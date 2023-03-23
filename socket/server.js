@@ -9,33 +9,33 @@ import { USERS } from './src/utils/constantes/index.js'
 
 import { NOTIFICATIONS } from './src/utils/constantes/index.js'
 
-const app = express();
-app.use(cors());
+const app = express()
+app.use(cors())
 
-const server = http.createServer(app);
-const io = new Server(server);
+const server = http.createServer(app)
+const io = new Server(server)
 
 app.get('/', (req, res) => {
-  res.json({ name: 'We have a socket!!!' });
-});
+  res.json({ name: 'We have a socket!!!' })
+})
 
 io.use((socket, next) => {
-  const token = socket.handshake.auth.token;
+  const token = socket.handshake.headers.token
 
   if (!token) {
-    console.log("Without token");
-    return next(new Error("Without token"));
+    console.log("Without token")
+    return next(new Error("Without token"))
   }
 
   const user = decodefy(token)
 
   if (!user) {
-    console.log("Invalid token");
-    return next(new Error("Invalid token"));
+    console.log("Invalid token")
+    return next(new Error("Invalid token"))
   }
 
-  socket.user = user;
-  next();
+  socket.user = user
+  next()
 })
 .on("connection", (socket) => {
   console.log('Socket connected')
@@ -45,11 +45,14 @@ io.use((socket, next) => {
   }
 
   consume(NOTIFICATIONS.QUEUES.TASK.STATUS.COMPLETE, message => {
-    console.log("Processing:", message.content);
+    const buf = message.content
+    const data = JSON.parse(buf.toString())
 
-    socket.to(USERS.TYPES.MANAGER).emit(
+    console.log("Processing:", buf.toString())
+
+    io.to(USERS.TYPES.MANAGER).emit(
       NOTIFICATIONS.QUEUES.TASK.STATUS.COMPLETE,
-      message.content
+      data
     )
   })
 })
@@ -61,4 +64,4 @@ server.listen(
   PORT,
   HOST,
   () => console.log(`Running on http:/${HOST}:${PORT}`)
-);
+)

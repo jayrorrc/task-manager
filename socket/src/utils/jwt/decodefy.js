@@ -1,7 +1,9 @@
 import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const KEY = process.env.AUTH_CONFIG_KEY
-const SECURITY_HEADER = process.env.AUTH_CONFIG_KEY_SECURITY_HEADER
 
 const decodefy = (token) => {
   if (!token) {

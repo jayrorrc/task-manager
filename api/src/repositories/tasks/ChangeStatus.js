@@ -39,18 +39,13 @@ export default {
     const data = { status }
 
     if (status === TASKS.STATUS.COMPLETE) {
-      data.completedAt = new Date()
+      data.completedAt = Date.now()
     }
-
-    console.log('data', data)
 
     const modified = await Task.update(data, filter)
 
-
     if (status === TASKS.STATUS.COMPLETE) {
       const task = await Task.findByPk(id)
-
-      console.log('task', task)
 
       sendToQueue(NOTIFICATIONS.QUEUES.TASK.STATUS.COMPLETE, {
         user: userAuth.username,
