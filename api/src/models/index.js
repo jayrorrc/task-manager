@@ -6,6 +6,9 @@ User.hasMany(Task, {
   allowNull: false,
 })
 
-Task.belongsTo(User)
+Task.belongsTo(User, {
+  foreignKey: 'owner',
+  allowNull: false,
+})
 
 export { User, Task }
