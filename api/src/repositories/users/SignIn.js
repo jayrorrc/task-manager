@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv';
 
-import { User } from './../../models/index.js'
+import { User } from '../../models/index.js'
 import Token from '../../utils/jwt/token.js'
 import {
   badRequest,

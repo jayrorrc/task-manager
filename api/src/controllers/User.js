@@ -1,7 +1,7 @@
 import ApiError from '../utils/ApiError/ApiError.js'
 
-import SingUp from '../repositories/users/SingUp.js'
-import SingIn from '../repositories/users/SingIn.js'
+import SingUp from '../repositories/users/SignUp.js'
+import SingIn from '../repositories/users/SignIn.js'
 
 class UserController {
   async singup(req, res) {

@@ -15,22 +15,22 @@ import {
 
 export default {
   async handle(userAuth, payload) {
+    const { type, id } = userAuth
     const { title, summary, status, owner } = payload
+
+    if (type !== USERS.TYPES.TECHNICIAN) {
+      throw unauthorized('This user can not create tasks')
+    }
 
     if (!title || !summary) {
       throw badRequest('Please ensure you fill the title and summary')
-    }
-
-    const { type } = userAuth
-    if (type !== USERS.TYPES.TECHNICIAN) {
-      throw unauthorized('This user can not create tasks ')
     }
 
     const data = {
       title,
       summary,
       status: status ? status : TASKS.STATUS.TODO,
-      owner: owner ? owner : userAuth.id
+      owner: owner ? owner : id
     }
 
     if (status === TASKS.STATUS.COMPLETE) {
