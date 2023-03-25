@@ -10,7 +10,7 @@ import {
 
 import {
   badRequest,
-  unauthorized
+  forbidden,
 } from '../../utils/ApiError/index.js'
 
 export default {
@@ -19,7 +19,7 @@ export default {
     const { title, summary, status, owner } = payload
 
     if (type !== USERS.TYPES.TECHNICIAN) {
-      throw unauthorized('This user can not create tasks')
+      throw forbidden('This user can not create tasks')
     }
 
     if (!title || !summary) {

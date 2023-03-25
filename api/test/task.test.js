@@ -3,6 +3,7 @@ import Create from '../src/repositories/tasks/Create.js'
 import Update from '../src/repositories/tasks/Update.js'
 import ChangeStatus from '../src/repositories/tasks/ChangeStatus.js'
 import Get from '../src/repositories/tasks/Get.js'
+import Delete from '../src/repositories/tasks/Delete.js'
 
 import sinon from 'sinon'
 import { expect } from 'chai'
@@ -28,7 +29,7 @@ describe("Task Service Unit Tests", () => {
           error = err
         }
 
-        expect(error.statusCode).to.equal(401)
+        expect(error.statusCode).to.equal(403)
         expect(error.message).to.equal('This user can not create tasks')
       })
     })
@@ -189,7 +190,7 @@ describe("Task Service Unit Tests", () => {
           error = err
         }
 
-        expect(error.statusCode).to.equal(401)
+        expect(error.statusCode).to.equal(403)
         expect(error.message).to.equal('This user can not update this tasks')
       })
     })
@@ -389,7 +390,7 @@ describe("Task Service Unit Tests", () => {
           error = err
         }
 
-        expect(error.statusCode).to.equal(401)
+        expect(error.statusCode).to.equal(403)
         expect(error.message).to.equal('This user can not update this tasks')
       })
     })
@@ -526,7 +527,7 @@ describe("Task Service Unit Tests", () => {
         expect(task.owner).to.equal(owner)
       })
 
-      it("should get others tasks", async () => {
+      it("should not get others tasks", async () => {
         const id = 1
         const title = 'task-1'
         const summary = 'summary-1'
@@ -547,29 +548,47 @@ describe("Task Service Unit Tests", () => {
           error = err
         }
 
-        expect(error.statusCode).to.equal(401)
+        expect(error.statusCode).to.equal(403)
         expect(error.message).to.equal('This user can not get this tasks')
       })
     })
   })
 
-  describe("List Task functionality", () => {
-    it("should test if MANAGERS can get all task", async () => {
-      console.log('empty')
-    })
-
-    it("should test if TECHNICIAN can get own tasks", async () => {
-      console.log('empty')
-    })
-  })
-
   describe("Delete Task functionality", () => {
-    it("should test if MANAGERS can delete a task", async () => {
-      console.log('empty')
+    describe(USERS.TYPES.MANAGER, () => {
+      it("should delete task", async () => {
+        const admin = {
+          id: 1,
+          type: USERS.TYPES.MANAGER
+        }
+
+        sinon.stub(Task, 'destroy').returns(1)
+
+        const { statusCode, data } = await Delete.handle(admin, 1)
+        const { modified } = data
+
+        expect(statusCode).to.equal(204)
+        expect(modified).to.equal(1)
+      })
     })
 
-    it("should test if TECHNICIAN can't delete a tasks", async () => {
-      console.log('empty')
+    describe(USERS.TYPES.TECHNICIAN, () => {
+      it("should not delete tasks", async () => {
+        const tech = {
+          id: 1,
+          type: USERS.TYPES.TECHNICIAN
+        }
+
+        let error
+        try {
+          await Delete.handle(tech, 1)
+        } catch (err) {
+          error = err
+        }
+
+        expect(error.statusCode).to.equal(403)
+        expect(error.message).to.equal('This user can not delete tasks')
+      })
     })
   })
 })

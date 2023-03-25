@@ -11,7 +11,6 @@ import {
 import {
   badRequest,
   forbidden,
-  unauthorized
 } from '../../utils/ApiError/index.js'
 
 export default {
@@ -27,7 +26,7 @@ export default {
     }
 
     if (type !== USERS.TYPES.TECHNICIAN) {
-      throw unauthorized('This user can not update this tasks')
+      throw forbidden('This user can not update this tasks')
     }
 
     const testTask = await Task.findByPk(id)

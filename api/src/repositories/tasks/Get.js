@@ -5,7 +5,7 @@ import {
 } from '../../utils/constantes/index.js'
 
 import {
-  unauthorized
+  forbidden,
 } from '../../utils/ApiError/index.js'
 
 export default {
@@ -19,7 +19,7 @@ export default {
     }
 
     if (task.owner !== userAuth.id && type == USERS.TYPES.TECHNICIAN) {
-      throw unauthorized('This user can not get this tasks')
+      throw forbidden('This user can not get this tasks')
     }
 
     return {

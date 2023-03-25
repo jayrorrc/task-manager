@@ -5,7 +5,7 @@ import {
 } from '../../utils/constantes/index.js'
 
 import {
-  unauthorized
+  forbidden,
 } from '../../utils/ApiError/index.js'
 
 export default {
@@ -14,7 +14,7 @@ export default {
     const { type } = userAuth
 
     if (type !== USERS.TYPES.MANAGER) {
-      throw unauthorized('This user can not delete this tasks ')
+      throw forbidden('This user can not delete tasks')
     }
 
     const modified = await Task.destroy({
