@@ -1,15 +1,17 @@
-import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken'
 import sinon from 'sinon'
-import User from '../src/models/User.js';
+import dotenv from 'dotenv'
+import bcrypt from 'bcrypt'
 import { expect } from 'chai'
 
-import { USERS } from '../src/utils/constantes/index.js'
-import SignUp from '../src/repositories/users/SignUp.js';
+import User from '../src/models/User.js'
+import SignUp from '../src/repositories/users/SignUp.js'
+import SignIn from '../src/repositories/users/SignIn.js'
 
-const KEY = process.env.AUTH_CONFIG_KEY
+import { USERS } from '../src/utils/constantes/index.js'
 
 dotenv.config();
+const KEY = process.env.AUTH_CONFIG_KEY
 
 describe("User Service Unit Tests", () => {
   afterEach(() => {
@@ -123,7 +125,62 @@ describe("User Service Unit Tests", () => {
 
   describe("Sign In User functionality", () => {
     it("should return a valid jwt token", async () => {
-      console.log('empty')
+      const username = 'admin'
+      const password = 'admin'
+      const type = USERS.TYPES.MANAGER
+
+      const saltRounds = parseInt(process.env.DEFULT_SALT_ROUNDS)
+
+      const salt = await bcrypt.genSalt(saltRounds)
+      const hashed = await bcrypt.hash(password, salt)
+
+      sinon.stub(User, 'findOne').returns({
+        id: 1,
+        username,
+        type,
+        password: hashed
+      })
+
+      const { statusCode , data } = await SignIn.handle({ username, password, type })
+      const { token } = data
+
+      const user = jwt.verify(token, KEY)
+
+      expect(statusCode).to.equal(200)
+      expect(user.username).to.equal(username)
+      expect(user.type).to.equal(type)
+    })
+
+    it("should not sign in with wrong password", async () => {
+      const username = 'admin'
+      const password = 'admin'
+      const type = USERS.TYPES.MANAGER
+
+      const saltRounds = parseInt(process.env.DEFULT_SALT_ROUNDS)
+
+      const salt = await bcrypt.genSalt(saltRounds)
+      const hashed = await bcrypt.hash(password, salt)
+
+      sinon.stub(User, 'findOne').returns({
+        id: 1,
+        username,
+        type,
+        password: hashed
+      })
+
+      let error
+      try {
+        await SignIn.handle({
+          username,
+          password: '123',
+          type
+        })
+      } catch (err) {
+        error = err
+      }
+
+      expect(error.statusCode).to.equal(401)
+      expect(error.message).to.equal('Wrong password')
     })
   })
 })

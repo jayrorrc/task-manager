@@ -1,12 +1,13 @@
-import Task from '../src/models/Task.js'
-import Create from '../src/repositories/tasks/Create.js'
-import Update from '../src/repositories/tasks/Update.js'
-import ChangeStatus from '../src/repositories/tasks/ChangeStatus.js'
-import Get from '../src/repositories/tasks/Get.js'
-import Delete from '../src/repositories/tasks/Delete.js'
-
 import sinon from 'sinon'
 import { expect } from 'chai'
+
+import Task from '../src/models/Task.js'
+
+import Get from '../src/repositories/tasks/Get.js'
+import Create from '../src/repositories/tasks/Create.js'
+import Update from '../src/repositories/tasks/Update.js'
+import Delete from '../src/repositories/tasks/Delete.js'
+import ChangeStatus from '../src/repositories/tasks/ChangeStatus.js'
 
 import { TASKS, USERS } from '../src/utils/constantes/index.js'
 
