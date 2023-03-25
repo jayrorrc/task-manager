@@ -17,11 +17,6 @@ export default {
   async handle(userAuth, params, payload) {
     const { status } = payload
     const { id } = params
-
-    if (!status) {
-      throw badRequest('Please ensure you fill the status')
-    }
-
     const { type } = userAuth
     const filter = {
       where: {
@@ -30,14 +25,24 @@ export default {
       }
     }
 
-    const testTask = Task.count(filter)
+    if (type !== USERS.TYPES.TECHNICIAN) {
+      throw unauthorized('This user can not update this tasks')
+    }
 
-    if (type !== USERS.TYPES.TECHNICIAN || !testTask) {
-      throw unauthorized('This user can not update this tasks ')
+    const testTask = await Task.findByPk(id)
+    if (!testTask) {
+      throw notFound('File not found')
+    }
+
+    if (testTask.owner !== userAuth.id) {
+      throw unauthorized('This user can not update this tasks')
+    }
+
+    if (!status) {
+      throw badRequest('Please ensure you fill the status')
     }
 
     const data = { status }
-
     if (status === TASKS.STATUS.COMPLETE) {
       data.completedAt = Date.now()
     }

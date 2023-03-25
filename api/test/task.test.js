@@ -1,6 +1,7 @@
 import Task from '../src/models/Task.js'
 import Create from '../src/repositories/tasks/Create.js'
 import Update from '../src/repositories/tasks/Update.js'
+import ChangeStatus from '../src/repositories/tasks/ChangeStatus.js'
 
 import sinon from 'sinon'
 import { expect } from 'chai'
@@ -367,16 +368,106 @@ describe("Task Service Unit Tests", () => {
   })
 
   describe("Change Status Task functionality", () => {
-    it("should test if MANAGERS can't chage status task", async () => {
-      console.log('empty')
+    describe(USERS.TYPES.MANAGER, () => {
+      it("should not chamge status of a task", async () => {
+        const id = 1
+        const status = TASKS.STATUS.IN_PROGRESS
+
+        const admin = {
+          type: USERS.TYPES.MANAGER
+        }
+
+        let error
+        try {
+          await ChangeStatus.handle(
+            admin,
+            id,
+            { status }
+          )
+        } catch (err) {
+          error = err
+        }
+
+        expect(error.statusCode).to.equal(401)
+        expect(error.message).to.equal('This user can not update this tasks')
+      })
     })
 
-    it("should test if TECHNICIAN can chage status own task", async () => {
-      console.log('empty')
-    })
+    describe(USERS.TYPES.TECHNICIAN, () => {
+      it("should change status of a task", async () => {
+        const id = 1
+        const status = TASKS.STATUS.IN_PROGRESS
 
-    it("should test if TECHNICIAN can't chage status others task", async () => {
-      console.log('empty')
+        const tech = {
+          id: 1,
+          type: USERS.TYPES.TECHNICIAN
+        }
+
+        sinon.stub(Task, 'update').returns(1)
+        sinon.stub(Task, 'findByPk').returns({id, owner: 1})
+
+        const { statusCode, data } = await ChangeStatus.handle(
+          tech,
+          id,
+          { status }
+        )
+
+        const { modified } = data
+        expect(statusCode).to.equal(204)
+        expect(modified).to.equal(1)
+      })
+
+      it("should not change status of others tasks", async () => {
+        const id = 1
+        const status = TASKS.STATUS.IN_PROGRESS
+
+        const tech = {
+          id: 1,
+          type: USERS.TYPES.TECHNICIAN
+        }
+
+        sinon.stub(Task, 'findByPk').returns({id, owner: 2})
+
+        let error
+        try {
+          await ChangeStatus.handle(
+            tech,
+            id,
+            { status }
+          )
+        } catch (err) {
+          error = err
+        }
+
+        expect(error.statusCode).to.equal(401)
+        expect(error.message).to.equal('This user can not update this tasks')
+      })
+
+      it("should not change status of a task without status", async () => {
+        const id = 1
+        const status = ''
+
+        const tech = {
+          id: 1,
+          type: USERS.TYPES.TECHNICIAN
+        }
+
+        sinon.stub(Task, 'findByPk').returns({id, owner: 1})
+
+        let error
+        try {
+          await ChangeStatus.handle(
+            tech,
+            id,
+            { status }
+          )
+        } catch (err) {
+          error = err
+        }
+
+        expect(error.statusCode).to.equal(400)
+        expect(error.message).to.equal('Please ensure you fill the status')
+      })
     })
   })
 
