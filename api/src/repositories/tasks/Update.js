@@ -10,18 +10,14 @@ import {
 
 import {
   badRequest,
-  unauthorized
+  unauthorized,
+  notFound
 } from '../../utils/ApiError/index.js'
 
 export default {
   async handle(userAuth, params, payload) {
     const { title, summary, status, owner } = payload
     const { id } = params
-
-    if (!title || !summary || !status || !owner) {
-      throw badRequest('Please ensure you fill the title, summary, status and owner')
-    }
-
     const { type } = userAuth
     const filter = {
       where: {
@@ -30,10 +26,21 @@ export default {
       }
     }
 
-    const testTask = Task.count(filter)
+    if (type !== USERS.TYPES.TECHNICIAN) {
+      throw unauthorized('This user can not update this tasks')
+    }
 
-    if (type !== USERS.TYPES.TECHNICIAN || !testTask) {
-      throw unauthorized('This user can not update this tasks ')
+    const testTask = await Task.findByPk(id)
+    if (!testTask) {
+      throw notFound('File not found')
+    }
+
+    if (testTask.owner !== userAuth.id) {
+      throw unauthorized('This user can not update this tasks')
+    }
+
+    if (!title || !summary || !status || !owner) {
+      throw badRequest('Please ensure you fill the title, summary, status and owner')
     }
 
     const data = {
