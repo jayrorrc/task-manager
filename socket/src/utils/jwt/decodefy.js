@@ -11,7 +11,7 @@ const decodefy = (token) => {
   }
 
   try {
-    return jwt.verify(token, KEY);
+    return jwt.verify(token, KEY)
   } catch(err) {
     return false
   }

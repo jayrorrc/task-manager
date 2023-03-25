@@ -125,7 +125,7 @@ describe("Task Service Unit Tests", () => {
         expect(error.message).to.equal('Please ensure you fill the title and summary')
       })
 
-      it(`should not create a task with a status diferent of: ${Object.values(TASKS.STATUS).join(', ')}`, async () => {
+      it(`should not create a task with a status diferent from: ${Object.values(TASKS.STATUS).join(', ')}`, async () => {
         const title = 'title-1'
         const summary = 'summary-1'
         const status = 'aaa'

@@ -9,7 +9,6 @@ import {
   notFound,
 } from '../../utils/ApiError/index.js'
 
-
 dotenv.config();
 
 export default {

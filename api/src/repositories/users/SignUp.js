@@ -8,7 +8,6 @@ import {
   unauthorized
 } from '../../utils/ApiError/index.js'
 
-
 dotenv.config();
 
 export default {
@@ -26,7 +25,7 @@ export default {
     })
 
     if (hasUser) {
-      throw unauthorized('This user exists')
+      throw unauthorized('This user alread exists')
     }
 
     const saltRounds = parseInt(process.env.DEFULT_SALT_ROUNDS)
