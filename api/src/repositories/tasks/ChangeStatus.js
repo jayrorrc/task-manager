@@ -10,6 +10,7 @@ import {
 
 import {
   badRequest,
+  forbidden,
   unauthorized
 } from '../../utils/ApiError/index.js'
 
@@ -35,7 +36,7 @@ export default {
     }
 
     if (testTask.owner !== userAuth.id) {
-      throw unauthorized('This user can not update this tasks')
+      throw forbidden('This user can not update this tasks')
     }
 
     if (!status) {

@@ -2,6 +2,7 @@ import Task from '../src/models/Task.js'
 import Create from '../src/repositories/tasks/Create.js'
 import Update from '../src/repositories/tasks/Update.js'
 import ChangeStatus from '../src/repositories/tasks/ChangeStatus.js'
+import Get from '../src/repositories/tasks/Get.js'
 
 import sinon from 'sinon'
 import { expect } from 'chai'
@@ -245,7 +246,7 @@ describe("Task Service Unit Tests", () => {
           error = err
         }
 
-        expect(error.statusCode).to.equal(401)
+        expect(error.statusCode).to.equal(403)
         expect(error.message).to.equal('This user can not update this tasks')
       })
 
@@ -369,7 +370,7 @@ describe("Task Service Unit Tests", () => {
 
   describe("Change Status Task functionality", () => {
     describe(USERS.TYPES.MANAGER, () => {
-      it("should not chamge status of a task", async () => {
+      it("should not change status of a task", async () => {
         const id = 1
         const status = TASKS.STATUS.IN_PROGRESS
 
@@ -439,7 +440,7 @@ describe("Task Service Unit Tests", () => {
           error = err
         }
 
-        expect(error.statusCode).to.equal(401)
+        expect(error.statusCode).to.equal(403)
         expect(error.message).to.equal('This user can not update this tasks')
       })
 
@@ -472,16 +473,83 @@ describe("Task Service Unit Tests", () => {
   })
 
   describe("Get Task functionality", () => {
-    it("should test if MANAGERS can get any task", async () => {
-      console.log('empty')
+    describe(USERS.TYPES.MANAGER, () => {
+      it("should get any task", async () => {
+        const id = 1
+        const title = 'task-1'
+        const summary = 'summary-1'
+        const status = TASKS.STATUS.IN_PROGRESS
+        const owner = 2
+
+        const admin = {
+          id: 1,
+          type: USERS.TYPES.MANAGER
+        }
+
+        sinon.stub(Task, 'findByPk').returns({id, title, summary, status, owner})
+
+        const { statusCode, data } = await Get.handle(admin, id)
+        const { task } = data
+
+        expect(statusCode).to.equal(200)
+        expect(task.id).to.equal(id)
+        expect(task.title).to.equal(title)
+        expect(task.summary).to.equal(summary)
+        expect(task.status).to.equal(status)
+        expect(task.owner).to.equal(owner)
+      })
     })
 
-    it("should test if TECHNICIAN can get own task", async () => {
-      console.log('empty')
-    })
+    describe(USERS.TYPES.TECHNICIAN, () => {
+      it("should get own task", async () => {
+        const id = 1
+        const title = 'task-1'
+        const summary = 'summary-1'
+        const status = TASKS.STATUS.IN_PROGRESS
+        const owner = 1
 
-    it("should test if TECHNICIAN can't get others task", async () => {
-      console.log('empty')
+        const tech = {
+          id: 1,
+          type: USERS.TYPES.TECHNICIAN
+        }
+
+        sinon.stub(Task, 'findByPk').returns({id, title, summary, status, owner})
+
+        const { statusCode, data } = await Get.handle(tech, id)
+        const { task } = data
+
+        expect(statusCode).to.equal(200)
+        expect(task.id).to.equal(id)
+        expect(task.title).to.equal(title)
+        expect(task.summary).to.equal(summary)
+        expect(task.status).to.equal(status)
+        expect(task.owner).to.equal(owner)
+      })
+
+      it("should get others tasks", async () => {
+        const id = 1
+        const title = 'task-1'
+        const summary = 'summary-1'
+        const status = TASKS.STATUS.IN_PROGRESS
+        const owner = 2
+
+        const tech = {
+          id: 1,
+          type: USERS.TYPES.TECHNICIAN
+        }
+
+        sinon.stub(Task, 'findByPk').returns({id, title, summary, status, owner})
+
+        let error
+        try {
+          await Get.handle(tech, id)
+        } catch (err) {
+          error = err
+        }
+
+        expect(error.statusCode).to.equal(401)
+        expect(error.message).to.equal('This user can not get this tasks')
+      })
     })
   })
 

@@ -11,24 +11,16 @@ import {
 export default {
   async handle(userAuth, params) {
     const { id } = params
-
     const { type } = userAuth
-    const filter = {
-      where: {
-        id,
-      }
+
+    const task = await Task.findByPk(id)
+    if (!task) {
+      throw notFound('File not found')
     }
 
-    if (type === USERS.TYPES.TECHNICIAN) {
-      filter.where.owner = userAuth.id
+    if (task.owner !== userAuth.id && type == USERS.TYPES.TECHNICIAN) {
+      throw unauthorized('This user can not get this tasks')
     }
-
-    const testTask = Task.count(filter)
-    if(!testTask) {
-      throw unauthorized('This user can not get this tasks ')
-    }
-
-    const task = await Task.findOne(filter)
 
     return {
       statusCode: 200,
