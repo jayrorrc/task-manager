@@ -23,14 +23,14 @@ io.use((socket, next) => {
   const token = socket.handshake.headers.token
 
   if (!token) {
-    console.log("Without token")
+    console.error("Without token")
     return next(new Error("Without token"))
   }
 
   const user = decodefy(token)
 
   if (!user) {
-    console.log("Invalid token")
+    console.error("Invalid token")
     return next(new Error("Invalid token"))
   }
 

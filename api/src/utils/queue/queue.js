@@ -26,14 +26,14 @@ const sendToQueue = (queue, message) => {
   connect()
     .then(channel => createQueue(channel, queue))
     .then(channel => channel.sendToQueue(queue, Buffer.from(JSON.stringify(message))))
-    .catch(err => console.log(err))
+    .catch(err => console.error(err))
 }
 
 const consume = (queue, callback) => {
   connect()
     .then(channel => createQueue(channel, queue))
     .then(channel => channel.consume(queue, callback, { noAck: true }))
-    .catch(err => console.log(err))
+    .catch(err => console.error(err))
 }
 
 export {
