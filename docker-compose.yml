@@ -47,10 +47,10 @@ services:
     ports:
       - "3306:3036"
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: task-manager
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_USER}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
       start_period: 5s
@@ -70,8 +70,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_USER_PASSWORD}
       CLOUDAMQP_URL: amqp://rabbitmq:5672
     healthcheck:
       test: rabbitmq-diagnostics check_running
